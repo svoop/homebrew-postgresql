@@ -1,4 +1,4 @@
-class PostgisAT15 < Formula
+class PostgisAT16 < Formula
   desc "Adds support for geographic objects to PostgreSQL"
   homepage "https://postgis.net/"
   url "https://download.osgeo.org/postgis/source/postgis-3.3.6.tar.gz"
@@ -25,7 +25,7 @@ class PostgisAT15 < Formula
   depends_on "geos"
   depends_on "icu4c"
   depends_on "json-c" # for GeoJSON and raster handling
-  depends_on "svoop/postgresql/postgresql@15"
+  depends_on "svoop/postgresql/postgresql@16"
   depends_on "pcre2"
   depends_on "proj"
   depends_on "protobuf-c" # for MVT (map vector tiles) support
@@ -34,7 +34,7 @@ class PostgisAT15 < Formula
   fails_with gcc: "5" # C++17
 
   def postgresql
-    Formula["svoop/postgresql/postgresql@15"]
+    Formula["svoop/postgresql/postgresql@16"]
   end
 
   def install
@@ -59,7 +59,7 @@ class PostgisAT15 < Formula
 
     system "./autogen.sh" if build.head?
     # Fixes config/install-sh: No such file or directory
-    # This is caused by a misalignment between ./configure in postgresql@15 and postgis
+    # This is caused by a misalignment between ./configure in postgresql@16 and postgis
     mv "build-aux", "config"
     inreplace %w[configure utils/Makefile.in] do |s|
       s.gsub! "build-aux", "config"
