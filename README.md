@@ -2,45 +2,36 @@
 
 This repo combines a few Homebrew formulae of versioned PostgreSQL extensions.
 
-Why? In its current form, [homebrew-core offers different major versions of PostgreSQL](https://github.com/Homebrew/homebrew-core/tree/master/Formula/p) , but all PostgreSQL extensions featured by homebrew-core are built against **exactly only one of those** major versions. In other words: You can't freely chose your version of PostgreSQL anymore as soon as your work requires the use of PostgreSQL extensions. See [this discussion](https://github.com/orgs/Homebrew/discussions/5157) for more.
+## PostGIS
 
-As a workaround, this repo contains the [tailored `postgresql@15` and `postgresql@16` formulae by @ozeias](https://github.com/ozeias/homebrew-postgresql) as well as the extensions I need for my projects. **The extensions are versioned according to the PostgreSQL they will be used with.**
-
-## Installation
+The official PostGIS formula supports PostgreSQL 14 and 17. Here's  how to install this combo for one of the versions in between using the formulae by [@ozeias](https://github.com/ozeias/homebrew-postgresql).
 
 Make sure you have not currently installed PostgreSQL:
 
 ```
+brew rm postgresql
 brew rm postgresql@15
 brew rm postgresql@16
 ```
 
-Now use this tap:
+Select the PostgreSQL version, either 15 or 16:
+
+```
+pgversion=16
+```
+
+Now use this tap to install PostgreSQL and PostGIS:
 
 ```
 brew tap svoop/postgresql
-
-brew install postgresql@15
-# or
-brew install postgresql@16
+brew install postgresql@${pgversion}
+brew install postgis@${pgversion}
 ```
 
 And once installed, run the server:
 
 ```
-brew services start svoop/postgresql/postgresql@15
-# or
-brew services start svoop/postgresql/postgresql@16
-```
-
-## PostGIS
-
-[PostGIS](https://postgis.net) is the de-facto standard for GIS on PostgreSQL:
-
-```
-brew install postgis@15
-# or
-brew install postgis@16
+brew services start svoop/postgresql/postgresql@${pgversion}
 ```
 
 And then install the extension:
@@ -51,12 +42,24 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 
 ## UUIDv7
 
-The [`pg_uuidv7` extension by @fboulnois](https://github.com/fboulnois/pg_uuidv7) adds support for UUIDv7 which are `INDEX`-friendly and therefore can be used as primary key. See [my short article](https://dev.to/svoop/shrink-uuids-with-postgresql-or-ruby-4i0m) for some background and how to shrink the UUID to only 22 characters e.g. for use in URLs.
+UUIDv7 is a recent `INDEX`-friendly UUID standard and can therefore be used as primary key. See [my short article](https://dev.to/svoop/shrink-uuids-with-postgresql-or-ruby-4i0m) for some background and how to shrink the UUID to only 22 characters e.g. for use in URLs.
+
+There is a [patch in the works](https://www.postgresql.org/message-id/flat/CAAhFRxitJv=yoGnXUgeLB_O+M7J2BJAmb5jqAT9gZ3bij3uLDA@mail.gmail.com) to add support to PostgreSQL, however, it won't be ready before PostgreSQL 18 at the earliest.
+
+Meanwhile, the [pg_uuidv7 extension by @fboulnois](https://github.com/fboulnois/pg_uuidv7) implements support for UUIDv7.
+
+Select the installed PostgreSQL version, either 15, 16 or 17:
 
 ```
-brew install pg_uuidv7@15
-# or
-brew install pg_uuidv7@16
+psql --version
+pgversion=17
+```
+
+Now use this tap to install pg_uuidv7:
+
+```
+brew tap svoop/postgresql
+brew install pg_uuidv7@${pgversion}
 ```
 
 And then install the extension:
@@ -70,4 +73,3 @@ You can now generate UUIDv7:
 ```
 SELECT uuid_generate_v7();
 ```
-
